@@ -1,0 +1,200 @@
+Čeština, nastavení kódování
+
+Existuje spousta pracných způsobů, jak zajistit na Internetu správné kódování češtiny. Jednoduše se to dá udělat využitím následujícího tagu, který se zadává do hlavičky html souboru:
+
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1250">
+
+Tím říkám, že dokument je kódován v kódování windows-1250. V případě jiných kódování se namísto windows-1250 píše norma kódování, která může být různá.
+
+Lepší než kódování windows-1250 je používat Latin-2 (ISO 8859-2). Pak to vypadá takto:
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+
+Charset pro kódování UTF-8:
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+Tento meta tag se má správně používat ještě před titulkem (tag <title>), protože kdyby titulek obsahoval čárkovaná písmena, a meta tag by byl až za ním, nemusí se pak v Exploreru stránka vůbec zobrazit.
+
+
+
+
+Robots.txt
+
+Každý robot, který přijde prohledávat váš server, by se měl napřed podívat do souboru robots.txt, zda nemá zakázaný vstup.
+
+Název souboru robots.txt musí být psán malými písmeny a soubor musí být umístěn v kořeni webu. To jest hned za .cz/ nebo .com/. Například na tomto webu má robots.txt adresu http://www.jakpsatweb.cz/robots.txt.
+
+Soubor robots.txt je obyčejný textový soubor, dá se vytvořit třeba v poznámkovém bloku. Jednotlivé řádky souboru robots.txt říkají, který robot (User-agent) kam nesmí (Disallow).
+Příklady zápisu robots.txt
+
+User-agent: *
+Disallow: /php/
+
+Význam: všichni roboti (to je ta hvězdička) nesmějí do adresáře /php/, protože řetězcem "/php/" vlastně začíná cesta souborů v tomto adresáři). Nebo:
+
+User-agent: Googlebot
+Disallow:
+
+User-agent: Gulliver
+Disallow: /
+
+Takový zápis říká, že Googlebot smí všude (to je to prázdné místo za disallow) a Gulliver nikam (to je to lomítko). Všimněte si povinného prázdného řádku mezi položkami. Nebo jiný příklad:
+
+User-agent: *
+Disallow: /cgi-bin/
+Disallow: /in
+
+Tento zápis zakázal všem robotům (hvězdička) vstupovat do adresáře /cgi-bin a načítat stránky, které začínají řetězcem "in". Takže třeba info.html, index.html, interni/ a podobně. To je mimochodem i přesná definice položky Disallow: zakazuje sledovat cesty, které začínají vypsaným řetězcem.
+
+Všimněte si, že za jedním řádkem User-agent se může vyskytovat více řádků zákazů. Také dejte pozor na lomítko na začátku zakazované adresy -- musí tam být, protože lomítkem začínají všechny cesty k souborům. Proto zápis
+
+User-agent: *
+Disallow: /
+
+znamená, že žádný robot nesmí nikam, protože každá cesta začíná lomítkem, a je tedy zakázaná.
+Výchozí nastavení je vše povoleno
+
+Pokud soubor robots.txt neexistuje, berou to roboti tak, že smějí všude. Neexistující nebo prázdný soubor robots.txt je totéž jako následující zápis:
+
+User-agent: *
+Disallow:
+
+Čili všem robotům (hvězdička) je povoleno vše (prázdné místo). Takovýto soubor robots.txt nemá cenu zakládat.
+
+Přesto doporučuji soubor robots.txt založit, i kdyby měl zůstat prázdný. Pokud totiž na serveru funguje nějaká hezká chybová stránka 404, může vyhledávač místo robots.txt dostat tuto chybovou stránku, kterou špatně pochopí, a z toho může být problém.
+
+Pokud na váš web vyhledávací roboti nechodí, tak si nastavením robots.txt moc nepomůžete. Robots.txt umí zakazovat; ale neumí žádným způsobem roboty přivolávat.
+Hvězdička se nedědí
+
+Mějme následující zápis:
+
+User-Agent: *
+Disallow: /en/
+
+User-Agent: Googlebot
+Disallow: /cs/
+
+Zápis říká, že žádný robot nesmí do adresáře /en/ a že GoogleBot nesmí do adresáře /cs/. Teď přijde kontrolní otázka: může GoogleBot do adresáře /en/?
+
+Ačkoli by se mohlo zdát, že GoogleBot patří do množiny všech robotů, a tedy do adresáře /en/ nesmí, je to jinak. Tím, že v robots.txt GoogleBot někde zmíníte, přestávají pro GoogleBot platit pravidla platící pro * (pro všechny User-Agenty).
+
+Takže GoogleBot ve výše uvedeném příkladu do adresáře /en/ smí! Má-li to fungovat tak, jak by to fungovalo při dědění hvězdičky, musí se napsat:
+
+User-Agent: *
+Disallow: /en/
+
+User-Agent: Googlebot
+Disallow: /en/
+Disallow: /cs/
+
+Pravda, je to trochu ukecanější, ale tak to je.
+User-agent
+
+Co se za User-agent dá psát kromě hvězdičky? Jméno robota. Ale nemusí se podobat jménům služby a já těch jmen moc neznám. Informace se dají najít na stránce http://www.robotstxt.org/wc/active/html/index.html (anglicky).
+
+Pro český web má smysl psát pravidla pro následující user-agenty:
+
+    "Googlebot" (google),
+    "Jyxobot" (Jyxo používané též na Atlasu)
+    "Seznambot" (pro fulltext Seznamu)
+    "holmes/3.7 (http://morfeo.centrum.cz/bot.php)" a pro Morfeo (Centrum)
+
+Pro anglicky nebo německy psaný web je dobré ještě přidat Yahoo a MSN search:
+
+    "Slurp" (Yahoo)
+    "msnbot" (MSN search, Microsoftí hledání)
+
+např. zakázání cgi skriptů pro robota Yahoo:
+
+User-agent: Slurp
+Disallow: /cgi-bin/
+Subdomény a protokoly
+
+Jestliže máte na své doméně 2. úrovně nějaké subdomény, je potřeba na každou subdoménu nahrát vlastní nový robots.txt (tedy samozřejmě jen pokud na těch subdoménách chcete něco zakazovat). Neznám žádný způsob, jak víc subdomén řídit jedním souborem robots.txt.
+
+Jestliže máte stránky zpřístupněné na protokolu https i na protokolu http, pamatujte, že roboti chápou stránky za https podobně, jako jinou subdoménu. V takovém případě je tedy potřeba mít také dva různé soubory robots.txt, i když chcete, aby se roboti k oběma stavům chovali stejně.
+Problémy
+
+    Někteří roboti prý ignorují robots.txt (syčáci :-) nebo jej interpretují nepřesně.
+    Pokud publikujete na nějakém veřejném serveru, kde nemáte doménu třetí úrovně, většinou nemáte práva na zápis do kořene webu. Tehdy nemůžete robots.txt použít. V tu chvíli se hodí meta tagy robots.
+
+Zpřístupnění offline
+
+Když Internet Explorer stahuje soubory pro prohlížení offline, tak se dívá na robots.txt a zdá se, že jeho omezení také respektuje. Pokud chcete, aby si vás čtenáři mohli číst offline na notebooku v autobuse (jako to dělám já), tak nedělejte robots.txt moc restriktivní.
+Rozšíření robots.txt
+Konstrukce Allow
+
+Novější specifikace robots.txt (zatím nikoli standard) dovoluje nějaké zakázané URL opět povolit. Pokud chcete  například zakázat JyxoBotu procházení celého webu, ale povolit mu adresář /ahoj/, zapíše se to takto:
+
+User-Agent: Jyxobot
+Disallow: /
+Allow: /stranky/
+
+Konstrukci Allow podporuje Google, Seznam, Jyxo a možná i další roboti (nevím), nepatří ale do původní specifikace.
+Jako-regulární znaky v robots.txt
+
+Googlebot, Jyxobot a Seznam chápe v konstrukci Disallow hvězdičku * jako zástuný znak, který nahrazuje libovolný počet znaků. Dolar $, který znamená konec adresy. Příklad:
+
+User-Agent: *
+Disallow: /*.php$
+
+Zakážete stahování všech souborů, jejichž adresa končí na ".php" (a začíná jakkoliv). Nebo
+
+User-Agent: Seznambot
+Disallow: /*12
+
+Zakáže Seznamu stahovat stránku, jejíž URL kdekoliv obsahuje dvanáctku. Uvědomte si, že základní robots.txt jakoby obsahuje hvězdičku na konci vždy.
+
+Nebo
+
+User-Agent: Googlebot
+Disallow: /komentare/$
+
+Zakáže stahování výchozího dokumentu v adresáři /komentare/, ale všechny ostatní soubory v adresáři /komentare/ mohou být stahovány.
+
+Dvě zvláštnosti Seznambota, jak fungoval do září 2008: 1) znak $ interpretuje pouze u pravidel obsahujících hvězdičku, 2) v jednom pravidle nesmí být dvě hvězdičky nebo víc (funguje jenom jedna). Novější speciality SeznamBota můžete najít v jeho nápovědě.
+Meta robots
+
+Meta tag v hlavičce HTML stránky umožňuje zakázat robotům jednak indexování obsahu, jednak sledování odkazů. Důvody pro takové zákazy jsou dosti řídké, leda snad má smysl zakázat indexování vnitřku některých rámů (typicky stránka s menu: noindex, follow).
+
+Do hlavičky se v HTML napíše tag:
+
+<meta name="robots" content="noindex, nofollow">
+
+Přípustné hodnoty:
+
+noindex
+    Obsah stránky nebude indexován
+index
+    Obsah stránky bude indexován (normální hodnota)
+nofollow
+    Odkazy nebudou sledovány
+follow
+    Odkazy budou sledovány (normál)
+all
+    vše povoleno, tedy jako index, follow 
+
+Musí se to psát do každé stránky znova (na hromadné zákazy je určen robots.txt).
+
+Další možnou hodnotou, kterou respektuje Google, je hodnota noarchive. Zabrání poskytnutí stránky z cache Google. Sice se do ní uloží, ale pouze pro účely indexace (nenabídne se archiv).
+
+Ještě musím zmínit, že opět ne všichni roboti to berou na vědomí. Např. Jyxo.cz meta tagy robots nerespektuje.
+Zákaz sledování odkazu rel="nofollow"
+
+Google počátkem roku 2005 oznámil, že při vyhodnocování důležitosti stránek nebude brát v úvahu odkazy, které obsahují atribut rel="nofollow". Mějme modelovou situaci, kdy budete chtít někoho pomluvit, ale přitom byste zároveň museli odkázat na jeho stránky. Tím by se jeho stránkám zvyšoval rank. Takže takhle:
+
+<a href="http://pavlova-stranka" rel="nofollow">Pavel je debil</a>
+
+V praxi jsem ověřil, že Google tento zápis respektuje minimálně tím, že odkazující stránku neuvádí mezi odkazujícími cílové stránky (operátor link:).
+
+Měl by to respektovat i MSN a Yahoo. Důvod pro zavedení byl údajně komentářový spam. Jyxo atribut rel nebere v potaz, Seznam také ne (ale může se to změnit), Morfeo to myslím bere.
+Neodkazovat odkazem
+
+Tohle už je pro pokročilé, takže to případně přeskočte.
+
+Vyhledávače si (zjednodušeně řečeno) sáhnou pro obsah každého URL, na které někde najdou odkaz. Pro provozovatele větších webů občas nastávají problémy toho typu, že vyhledávače na jejich webu znají sice hodně URL, ale obsah těchto URL je stejný nebo hodně podobný. Konkrétně mám na mysli třeba stovky variant různě setříděných, ale jinak stejných výpisů z databáze apod. Potom jsou tyto stránky z vyhledávání kvůli podobnostem vyřazovány nebo se jim tříští rank. V takovém případě je dobré různá taková URL vyhledávačům nějak znepřístupnit.
+
+To ale často nejde. Zakázání přes robots.txt nejde použít kvůli složitým URL (parametry za otazníkem se do robots.txt špatně vypisují, některé vyhledávače je ignorují) a metatagy moc užitečné nejsou (Jyxo je ignoruje). Pro takové případy se hodí javascriptové odkazy nebo ještě lépe odkazy tvořené postem formuláře.
+
+Celý vtip spočívá tedy v tom, že se URL nezakáže, ale utají.
